@@ -1,0 +1,42 @@
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="py.com.aquipago.pronetbackend.data.mapper.SemexpedienteMapperRepository">
+    <resultMap id="SemexpedienteResultMap" type="py.com.aquipago.pronetbackend.data.dto.SemexpedienteDTO">
+        <result column="nro_expediente" property="nroExpediente"/>
+        <result column="ind_ejefisexp" property="indEjefisexp"/>
+        <result column="nro_carpeta" property="nroCarpeta"/>
+        <result column="ind_ejefiscar" property="indEjefiscar"/>
+        <result column="des_expediente" property="desExpediente"/>
+        <result column="nro_tipexp" property="nroTipexp"/>
+        <result column="nro_titular" property="nroTitular"/>
+        <result column="nro_representante" property="nroRepresentante"/>
+        <result column="ind_prioridad" property="indPrioridad"/>
+        <result column="fec_iniexp" property="fecIniexp"/>
+        <result column="fec_ultmov" property="fecUltmov"/>
+        <result column="nro_mesent" property="nroMesent"/>
+        <result column="cod_depen" property="codDepen"/>
+        <result column="nro_tarea" property="nroTarea"/>
+        <result column="nro_funcionario" property="nroFuncionario"/>
+        <result column="obs_expediente" property=""/>
+        <result column="nro_estexp" property="nroEstexp"/>
+        <result column="usu_alta" property="usuAlta"/>
+        <result column="fec_alta" property="fecAlta"/>
+        <result column="usu_ultmod" property="usuUltmod"/>
+        <result column="fec_ultmod" property="fecUltmod"/>
+    </resultMap>
+
+
+    <resultMap id="ExpedienteResultMap" type="py.com.aquipago.pronetbackend.data.dto.ExpedienteDTO">
+        <result column="nro_expediente" property="nroExpediente"/>
+        <result column="ind_ejefisexp" property="indEjefisexp"/>
+        <result column="nro_carpeta" property="nroCarpeta"/>
+        <result column="ind_ejefiscar" property="indEjefiscar"/>
+        <result column="des_expediente" property="desExpediente"/>
+        <result column="nro_titular" property="nroTitular"/>
+        <result column="fec_ultmov" property="fecUltmov"/>
+        <result column="cod_depen" property="codDepen"/>
+        <result column="des_depen" property="desDepen"/>
+    </resultMap>
+</mapper>
