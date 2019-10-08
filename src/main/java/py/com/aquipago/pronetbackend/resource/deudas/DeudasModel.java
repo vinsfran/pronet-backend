@@ -42,8 +42,8 @@ public class DeudasModel implements Serializable {
     @SerializedName("cliente")
     private ClientesModel cliente;
 
-    @JsonProperty("servicios")
-    @SerializedName("servicios")
-    private ServiciosModel servicios;
+    @JsonProperty("servicio")
+    @SerializedName("servicio")
+    private ServiciosModel servicio;
 
 }

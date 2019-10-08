@@ -18,8 +18,8 @@ import java.util.List;
 @ToString(callSuper = true)
 public class TransaccionesPageResponse extends BaseResponse {
 
-    @JsonProperty("transacciones")
-    @SerializedName("transacciones")
+    @JsonProperty("page")
+    @SerializedName("page")
     private Page<TransaccionesModel> transacciones;
 
     public TransaccionesPageResponse(Integer status, List<MessageResponse> messages, Page<TransaccionesModel> transacciones) {

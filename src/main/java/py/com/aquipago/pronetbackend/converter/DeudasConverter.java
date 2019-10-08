@@ -26,7 +26,7 @@ public class DeudasConverter {
         deudas.setVencimiento(deudasModel.getVencimiento());
         deudas.setEstado(deudasModel.getEstado());
         deudas.setClienteId(ClientesConverter.clientesModelToClientes(deudasModel.getCliente()));
-        deudas.setServicios(ServiciosConverter.serviciosModelToServicios(deudasModel.getServicios()));
+        deudas.setServicios(ServiciosConverter.serviciosModelToServicios(deudasModel.getServicio()));
         return deudas;
     }
 
@@ -37,7 +37,7 @@ public class DeudasConverter {
         deudasModel.setVencimiento(deudas.getVencimiento());
         deudasModel.setEstado(deudas.getEstado());
         deudasModel.setCliente(ClientesConverter.clientesToClientesModel(deudas.getClienteId()));
-        deudasModel.setServicios(ServiciosConverter.serviciosToServiciosModel(deudas.getServicios()));
+        deudasModel.setServicio(ServiciosConverter.serviciosToServiciosModel(deudas.getServicios()));
         return deudasModel;
     }
 
