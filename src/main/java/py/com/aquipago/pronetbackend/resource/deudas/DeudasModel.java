@@ -13,6 +13,7 @@ import py.com.aquipago.pronetbackend.resource.clientes.ClientesModel;
 import py.com.aquipago.pronetbackend.resource.servicios.ServiciosModel;
 
 import java.io.Serializable;
+import java.math.BigDecimal;
 import java.util.Date;
 
 @Data
@@ -25,6 +26,10 @@ public class DeudasModel implements Serializable {
     @JsonProperty("factura")
     @SerializedName("factura")
     private String factura;
+
+    @JsonProperty("importe")
+    @SerializedName("importe")
+    private BigDecimal importe;
 
     @ApiModelProperty(value = "Fecha de Vencimiento", required = false, example = "AAAA-MM-DD")
     @JsonFormat(pattern = "yyyy-MM-dd")

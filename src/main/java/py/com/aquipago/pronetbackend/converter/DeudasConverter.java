@@ -23,6 +23,7 @@ public class DeudasConverter {
     public static Deudas deudasModelToDeudas(DeudasModel deudasModel) {
         Deudas deudas = new Deudas();
         deudas.setDeudasPK(new DeudasPK(deudasModel.getServicioId(), deudasModel.getFactura()));
+        deudas.setImporte(deudasModel.getImporte());
         deudas.setVencimiento(deudasModel.getVencimiento());
         deudas.setEstado(deudasModel.getEstado());
         deudas.setClienteId(ClientesConverter.clientesModelToClientes(deudasModel.getCliente()));
@@ -34,6 +35,7 @@ public class DeudasConverter {
         DeudasModel deudasModel = new DeudasModel();
         deudasModel.setServicioId(deudas.getDeudasPK().getServicioId());
         deudasModel.setFactura(deudas.getDeudasPK().getFactura());
+        deudasModel.setImporte(deudas.getImporte());
         deudasModel.setVencimiento(deudas.getVencimiento());
         deudasModel.setEstado(deudas.getEstado());
         deudasModel.setCliente(ClientesConverter.clientesToClientesModel(deudas.getClienteId()));

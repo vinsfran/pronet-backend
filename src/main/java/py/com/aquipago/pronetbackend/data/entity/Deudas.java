@@ -18,15 +18,19 @@ public class Deudas implements Serializable {
     private static final long serialVersionUID = 1L;
     @EmbeddedId
     protected DeudasPK deudasPK;
+
     // @Max(value=?)  @Min(value=?)//if you know range of your decimal fields consider using these annotations to enforce field validation
     @Column(name = "importe")
     private BigDecimal importe;
+
     @Column(name = "vencimiento")
     @Temporal(TemporalType.DATE)
     private Date vencimiento;
+
     @Size(max = 2)
     @Column(name = "estado")
     private String estado;
+
     @JoinColumn(name = "cliente_id", referencedColumnName = "id")
     @ManyToOne
     private Clientes clienteId;
