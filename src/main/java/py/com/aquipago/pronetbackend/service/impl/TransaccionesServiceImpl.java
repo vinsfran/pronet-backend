@@ -8,9 +8,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import py.com.aquipago.pronetbackend.converter.TransaccionesConverter;
 import py.com.aquipago.pronetbackend.data.repository.TransaccionesRepository;
+import py.com.aquipago.pronetbackend.resource.transacciones.Pantalla2Model;
 import py.com.aquipago.pronetbackend.resource.transacciones.TransaccionesModel;
 import py.com.aquipago.pronetbackend.service.TransaccionesService;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -52,5 +54,19 @@ public class TransaccionesServiceImpl implements TransaccionesService {
             throw new Exception(e.getMessage());
         }
         return transacciones;
+    }
+
+    @Override
+    public Page<Pantalla2Model> findByRangoFecha(Date startDate, Date endDate, Pageable pageable) throws Exception {
+        Page<Pantalla2Model> pantalla2ModelPage;
+        try {
+            pantalla2ModelPage = TransaccionesConverter.pageTransaccionesToPagePantalla2Model(pageable, transaccionesRepository.findByRangoFecha(startDate, endDate, pageable));
+            if (pantalla2ModelPage == null) {
+                throw new Exception("No existen Transacciones");
+            }
+        } catch (Exception e) {
+            throw new Exception(e.getMessage());
+        }
+        return pantalla2ModelPage;
     }
 }

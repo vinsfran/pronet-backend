@@ -10,10 +10,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import py.com.aquipago.pronetbackend.resource.common.BaseResponse;
 import py.com.aquipago.pronetbackend.resource.common.MessageResponse;
@@ -23,6 +25,7 @@ import springfox.documentation.annotations.ApiIgnore;
 
 import javax.servlet.http.HttpServletResponse;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 @RestController
@@ -109,6 +112,53 @@ public class TransaccionesResource {
                 message = new MessageResponse(StatusLevel.INFO, "Lista de Transacciones OK");
                 messages.add(message);
                 response = new TransaccionesPageResponse(httpStatus.value(), messages, transacciones);
+            } else {
+                httpStatus = HttpStatus.INTERNAL_SERVER_ERROR;
+                message = new MessageResponse(StatusLevel.ERROR, "ERROR");
+                messages.add(message);
+                response = new BaseResponse(httpStatus.value(), messages);
+            }
+        } catch (Exception e) {
+            httpStatus = HttpStatus.INTERNAL_SERVER_ERROR;
+            message = new MessageResponse(StatusLevel.INFO, "Error al realizar la consulta a la base de datos!");
+            messages.add(message);
+            message = new MessageResponse(StatusLevel.ERROR, e.getMessage());
+            messages.add(message);
+            response = new BaseResponse(httpStatus.value(), messages);
+        }
+        return new ResponseEntity<>(response, httpStatus);
+    }
+
+    @ApiResponses(value = {
+            @ApiResponse(code = HttpServletResponse.SC_OK, message = "OK")
+            ,
+            @ApiResponse(code = HttpServletResponse.SC_CREATED, message = "CREATED")
+            ,
+            @ApiResponse(code = HttpServletResponse.SC_BAD_REQUEST, message = "BAD REQUEST")
+            ,
+            @ApiResponse(code = HttpServletResponse.SC_UNAUTHORIZED, message = "UNAUTHORIZED")
+            ,
+            @ApiResponse(code = HttpServletResponse.SC_FORBIDDEN, message = "FORBIDDEN")
+            ,
+            @ApiResponse(code = HttpServletResponse.SC_NOT_FOUND, message = "NOT FOUND")
+            ,
+            @ApiResponse(code = HttpServletResponse.SC_INTERNAL_SERVER_ERROR, message = "INTERNAL ERROR SERVER")})
+    @ApiOperation(value = "getAllByPage", notes = "Retorna lista de transacciones con paginacion")
+    @GetMapping("/pantalla2")
+    public ResponseEntity<?> findByRangoFecha(@ApiIgnore Pageable pageable,
+                                              @RequestParam(value = "fecha_desde", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") Date fechaDesde,
+                                              @RequestParam(value = "fecha_hasta", required = false) @DateTimeFormat(pattern = "yyyy-MM-dd") Date fechaHasta) {
+        HttpStatus httpStatus;
+        BaseResponse response;
+        MessageResponse message;
+        List<MessageResponse> messages = new ArrayList<>();
+        try {
+            Page<Pantalla2Model> pantalla2ModelPage = transaccionesService.findByRangoFecha(fechaDesde, fechaHasta, pageable);
+            if (pantalla2ModelPage != null) {
+                httpStatus = HttpStatus.OK;
+                message = new MessageResponse(StatusLevel.INFO, "Lista de Transacciones OK");
+                messages.add(message);
+                response = new Pantalla2PageResponse(httpStatus.value(), messages, pantalla2ModelPage);
             } else {
                 httpStatus = HttpStatus.INTERNAL_SERVER_ERROR;
                 message = new MessageResponse(StatusLevel.ERROR, "ERROR");

@@ -8,6 +8,7 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Component;
 import py.com.aquipago.pronetbackend.data.entity.Transacciones;
+import py.com.aquipago.pronetbackend.resource.transacciones.Pantalla2Model;
 import py.com.aquipago.pronetbackend.resource.transacciones.TransaccionesModel;
 
 import java.util.ArrayList;
@@ -37,6 +38,17 @@ public class TransaccionesConverter {
         return transaccionesModel;
     }
 
+    public static Pantalla2Model transaccionesToPantalla2Model(Transacciones transacciones) {
+        Pantalla2Model pantalla2Model = new Pantalla2Model();
+        pantalla2Model.setFecha(transacciones.getFecha());
+        pantalla2Model.setServicio(transacciones.getDeudas().getServicios().getDescripcion());
+        pantalla2Model.setFactura(transacciones.getDeudas().getDeudasPK().getFactura());
+        pantalla2Model.setCliente(transacciones.getDeudas().getClienteId().getNombreCompleto());
+        pantalla2Model.setTotal(transacciones.getImporte().add(transacciones.getComision()));
+        return pantalla2Model;
+    }
+
+
     public static List<TransaccionesModel> listEntitytoListModel(List<Transacciones> listEntity) {
         List<TransaccionesModel> listModel = new ArrayList<>();
         for (Transacciones entity : listEntity) {
@@ -53,6 +65,26 @@ public class TransaccionesConverter {
 
     public static Page<TransaccionesModel> pageEntitytoPageModel(Pageable pageable, Page<Transacciones> pageEntity) {
         List<TransaccionesModel> models = mapEntitiesIntoDTOs(pageEntity.getContent());
+        return new PageImpl<>(models, pageable, pageEntity.getTotalElements());
+    }
+
+
+    public static List<Pantalla2Model> listTransaccionesToListPantalla2Model(List<Transacciones> listEntity) {
+        List<Pantalla2Model> listModel = new ArrayList<>();
+        for (Transacciones entity : listEntity) {
+            listModel.add(transaccionesToPantalla2Model(entity));
+        }
+        return listModel;
+    }
+
+    static List<Pantalla2Model> mapTransaccionesToPantalla2Model(Iterable<Transacciones> entities) {
+        List<Pantalla2Model> dtos = new ArrayList<>();
+        entities.forEach(e -> dtos.add(transaccionesToPantalla2Model(e)));
+        return dtos;
+    }
+
+    public static Page<Pantalla2Model> pageTransaccionesToPagePantalla2Model(Pageable pageable, Page<Transacciones> pageEntity) {
+        List<Pantalla2Model> models = mapTransaccionesToPantalla2Model(pageEntity.getContent());
         return new PageImpl<>(models, pageable, pageEntity.getTotalElements());
     }
 }
