@@ -10,11 +10,17 @@ import org.springframework.stereotype.Repository;
 import py.com.aquipago.pronetbackend.data.entity.Transacciones;
 
 import java.util.Date;
+import java.util.List;
 
 @Repository("transaccionesRepository")
 public interface TransaccionesRepository extends JpaRepository<Transacciones, Long> {
 
-    @Query(value = "select u from Transacciones u where u.fecha BETWEEN :startDate and :endDate")
+    @Query(value = "SELECT u FROM Transacciones u WHERE u.fecha BETWEEN :startDate AND :endDate")
     Page<Transacciones> findByRangoFecha(@Param("startDate") Date startDate, @Param("endDate") Date endDate, Pageable pageable);
 
+//    @Query(value = "SELECT u FROM Transacciones u WHERE u.fecha BETWEEN :startDate AND :endDate GROUP BY u.deudas.deudasPK.servicioId")
+//    Page<Transacciones> findByRangoFechaGroupBy(@Param("startDate") Date startDate, @Param("endDate") Date endDate, Pageable pageable);
+
+    @Query(value = "SELECT u FROM Transacciones u WHERE u.fecha BETWEEN :startDate AND :endDate")
+    List<Transacciones> findByRangoFecha(@Param("startDate") Date startDate, @Param("endDate") Date endDate);
 }

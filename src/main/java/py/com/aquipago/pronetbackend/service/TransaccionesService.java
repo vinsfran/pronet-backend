@@ -4,6 +4,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.repository.query.Param;
 import py.com.aquipago.pronetbackend.resource.transacciones.Pantalla2Model;
+import py.com.aquipago.pronetbackend.resource.transacciones.Pantalla3Model;
 import py.com.aquipago.pronetbackend.resource.transacciones.TransaccionesModel;
 
 import java.util.Date;
@@ -19,4 +20,6 @@ public interface TransaccionesService {
     Page<TransaccionesModel> findAll(Pageable pageable) throws Exception;
 
     Page<Pantalla2Model> findByRangoFecha(@Param("startDate") Date startDate, @Param("endDate") Date endDate, Pageable pageable) throws Exception;
+
+    Pantalla3Model findByRangoFechaPantall3(@Param("startDate") Date startDate, @Param("endDate") Date endDate) throws Exception;
 }

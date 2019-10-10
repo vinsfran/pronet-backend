@@ -1,0 +1,13 @@
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="py.com.aquipago.pronetbackend.data.mapper.TransaccionesMapper">
+
+    <resultMap id="GroupByResultMap" type="py.com.aquipago.pronetbackend.data.dto.Pantalla3DTO">
+        <result column="servicio_id" property="servicioId"/>
+        <result column="descripcion" property="descripcion"/>
+        <result column="sum" property="importe"/>
+        <result column="porcentaje" property="porcentaje"/>
+    </resultMap>
+</mapper>
