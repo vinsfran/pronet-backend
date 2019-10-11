@@ -11,11 +11,9 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import py.com.aquipago.pronetbackend.resource.common.BaseResponse;
 import py.com.aquipago.pronetbackend.resource.common.MessageResponse;
 import py.com.aquipago.pronetbackend.resource.common.StatusLevel;
@@ -24,6 +22,7 @@ import py.com.aquipago.pronetbackend.service.DeudasService;
 import springfox.documentation.annotations.ApiIgnore;
 
 import javax.servlet.http.HttpServletResponse;
+import javax.validation.Valid;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -153,12 +152,68 @@ public class DeudasResource {
         MessageResponse message;
         List<MessageResponse> messages = new ArrayList<>();
         try {
+            if (estado.isEmpty()) {
+                estado = null;
+            }
+            if (numeroDocumento.isEmpty()) {
+                numeroDocumento = null;
+            }
+            if (tipoDocumento.isEmpty()) {
+                tipoDocumento = null;
+            }
+            if (servicio.isEmpty()) {
+                servicio = null;
+            }
             List<Pantalla1Model> pantalla1ModelList = deudasService.findPantall1(estado, numeroDocumento, tipoDocumento, servicio);
             if (pantalla1ModelList != null) {
                 httpStatus = HttpStatus.OK;
                 message = new MessageResponse(StatusLevel.INFO, "Lista de Deudas OK");
                 messages.add(message);
                 response = new Pantalla1ListResponse(httpStatus.value(), messages, pantalla1ModelList);
+            } else {
+                httpStatus = HttpStatus.INTERNAL_SERVER_ERROR;
+                message = new MessageResponse(StatusLevel.ERROR, "ERROR");
+                messages.add(message);
+                response = new BaseResponse(httpStatus.value(), messages);
+            }
+        } catch (Exception e) {
+            httpStatus = HttpStatus.INTERNAL_SERVER_ERROR;
+            message = new MessageResponse(StatusLevel.INFO, "Error al realizar la consulta a la base de datos!");
+            messages.add(message);
+            message = new MessageResponse(StatusLevel.ERROR, e.getMessage());
+            messages.add(message);
+            response = new BaseResponse(httpStatus.value(), messages);
+        }
+        return new ResponseEntity<>(response, httpStatus);
+    }
+
+    @ApiResponses(value = {
+            @ApiResponse(code = HttpServletResponse.SC_OK, message = "OK")
+            ,
+            @ApiResponse(code = HttpServletResponse.SC_CREATED, message = "CREATED")
+            ,
+            @ApiResponse(code = HttpServletResponse.SC_BAD_REQUEST, message = "BAD REQUEST")
+            ,
+            @ApiResponse(code = HttpServletResponse.SC_UNAUTHORIZED, message = "UNAUTHORIZED")
+            ,
+            @ApiResponse(code = HttpServletResponse.SC_FORBIDDEN, message = "FORBIDDEN")
+            ,
+            @ApiResponse(code = HttpServletResponse.SC_NOT_FOUND, message = "NOT FOUND")
+            ,
+            @ApiResponse(code = HttpServletResponse.SC_INTERNAL_SERVER_ERROR, message = "INTERNAL ERROR SERVER")})
+    @ApiOperation(value = "procesarPago", notes = "Procesa pago de deudas")
+    @PutMapping(path = "/procesar-pago", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> procesarPago(@Valid @RequestBody Pantalla1Request pantalla1Request) {
+        HttpStatus httpStatus;
+        BaseResponse response;
+        MessageResponse message;
+        List<MessageResponse> messages = new ArrayList<>();
+        try {
+            if (deudasService.procesarPago(pantalla1Request.getServicioId(), pantalla1Request.getFactura())) {
+                httpStatus = HttpStatus.OK;
+                message = new MessageResponse(StatusLevel.INFO, "Pago procesado OK");
+                messages.add(message);
+                response = new BaseResponse(httpStatus.value(), messages);
             } else {
                 httpStatus = HttpStatus.INTERNAL_SERVER_ERROR;
                 message = new MessageResponse(StatusLevel.ERROR, "ERROR");

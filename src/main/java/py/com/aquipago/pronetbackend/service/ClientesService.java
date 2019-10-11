@@ -14,4 +14,6 @@ public interface ClientesService {
     List<ClientesModel> findAll() throws Exception;
 
     Page<ClientesModel> findAll(Pageable pageable) throws Exception;
+
+    List<String> getTipoDocumentos() throws Exception;
 }

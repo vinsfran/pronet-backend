@@ -44,4 +44,8 @@ public class Pantalla1Model implements Serializable {
     @SerializedName("importe")
     private BigDecimal importe;
 
+    @JsonProperty("estado")
+    @SerializedName("estado")
+    private String estado;
+
 }

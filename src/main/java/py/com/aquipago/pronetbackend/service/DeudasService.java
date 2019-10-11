@@ -17,4 +17,6 @@ public interface DeudasService {
     Page<DeudasModel> findAll(Pageable pageable) throws Exception;
 
     List<Pantalla1Model> findPantall1(String estado, String numeroDocumento, String tipoDocumento, String servicio) throws Exception;
+
+    boolean procesarPago(long servicioId, String factura) throws Exception;
 }

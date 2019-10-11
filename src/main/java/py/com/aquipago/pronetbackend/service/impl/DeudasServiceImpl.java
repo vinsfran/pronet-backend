@@ -10,14 +10,24 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import py.com.aquipago.pronetbackend.converter.DeudasConverter;
 import py.com.aquipago.pronetbackend.data.dto.Pantalla1DTO;
+import py.com.aquipago.pronetbackend.data.entity.Deudas;
+import py.com.aquipago.pronetbackend.data.entity.DeudasPK;
+import py.com.aquipago.pronetbackend.data.entity.Servicios;
+import py.com.aquipago.pronetbackend.data.entity.Transacciones;
 import py.com.aquipago.pronetbackend.data.mapper.DeudasMapper;
 import py.com.aquipago.pronetbackend.data.repository.DeudasRepository;
+import py.com.aquipago.pronetbackend.data.repository.ServiciosRepository;
+import py.com.aquipago.pronetbackend.data.repository.TransaccionesRepository;
 import py.com.aquipago.pronetbackend.resource.deudas.DeudasModel;
 import py.com.aquipago.pronetbackend.resource.deudas.Pantalla1Model;
 import py.com.aquipago.pronetbackend.service.DeudasService;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.Optional;
 
 /**
  * @author vinsfran
@@ -30,6 +40,14 @@ public class DeudasServiceImpl implements DeudasService {
     @Autowired
     @Qualifier("deudasRepository")
     private DeudasRepository deudasRepository;
+
+    @Autowired
+    @Qualifier("serviciosRepository")
+    private ServiciosRepository serviciosRepository;
+
+    @Autowired
+    @Qualifier("transaccionesRepository")
+    private TransaccionesRepository transaccionesRepository;
 
     @Autowired
     private DeudasMapper deudasMapper;
@@ -87,6 +105,37 @@ public class DeudasServiceImpl implements DeudasService {
             throw new Exception(e.getMessage());
         }
         return pantalla1Models;
+    }
+
+    @Override
+    @Transactional
+    public boolean procesarPago(long servicioId, String factura) throws Exception {
+        DeudasPK deudasPK = new DeudasPK(servicioId, factura);
+        try {
+            Deudas deudas = deudasRepository.findByDeudasPK(deudasPK);
+            if (deudas == null) {
+                throw new Exception("No existe Deuda");
+            }
+            deudas.setEstado("CO");
+            deudasRepository.save(deudas);
+            Optional<Servicios> optionalServicios = serviciosRepository.findById(deudas.getDeudasPK().getServicioId());
+            if (!optionalServicios.isPresent()) {
+                throw new Exception("No existe Servicio");
+            }
+            Servicios servicios = optionalServicios.get();
+            Long nextTransaccionId = transaccionesRepository.maxId() + 1;
+            BigDecimal transaccionComision = deudas.getImporte().multiply(new BigDecimal(servicios.getComision())).divide(new BigDecimal(100), 2, RoundingMode.HALF_UP);
+            Transacciones transacciones = new Transacciones();
+            transacciones.setId(nextTransaccionId);
+            transacciones.setDeudas(deudas);
+            transacciones.setFecha(new Date());
+            transacciones.setImporte(deudas.getImporte());
+            transacciones.setComision(transaccionComision);
+            transaccionesRepository.save(transacciones);
+        } catch (Exception e) {
+            throw new Exception(e.getMessage());
+        }
+        return true;
     }
 
 }

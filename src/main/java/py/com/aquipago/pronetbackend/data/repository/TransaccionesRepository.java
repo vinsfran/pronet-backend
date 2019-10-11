@@ -23,4 +23,7 @@ public interface TransaccionesRepository extends JpaRepository<Transacciones, Lo
 
     @Query(value = "SELECT u FROM Transacciones u WHERE u.fecha BETWEEN :startDate AND :endDate")
     List<Transacciones> findByRangoFecha(@Param("startDate") Date startDate, @Param("endDate") Date endDate);
+
+    @Query(value = "SELECT MAX(u.id) FROM Transacciones u")
+    Long maxId();
 }

@@ -1,4 +1,4 @@
-package py.com.aquipago.pronetbackend.resource.deudas;
+package py.com.aquipago.pronetbackend.resource.clientes;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.google.gson.annotations.SerializedName;
@@ -15,14 +15,14 @@ import java.util.List;
 @Data
 @EqualsAndHashCode(callSuper = true)
 @ToString(callSuper = true)
-public class Pantalla1ListResponse extends BaseResponse {
+public class ClientesTiposDocumentosResponse extends BaseResponse {
 
-    @JsonProperty("deudas")
-    @SerializedName("deudas")
-    private List<Pantalla1Model> pantalla1Models;
+    @JsonProperty("tipos_documentos")
+    @SerializedName("tipos_documentos")
+    private List<String> tiposDocumentos;
 
-    public Pantalla1ListResponse(Integer status, List<MessageResponse> messages, List<Pantalla1Model> pantalla1Models) {
+    public ClientesTiposDocumentosResponse(Integer status, List<MessageResponse> messages, List<String> tiposDocumentos) {
         super(status, messages);
-        this.pantalla1Models = pantalla1Models;
+        this.tiposDocumentos = tiposDocumentos;
     }
 }

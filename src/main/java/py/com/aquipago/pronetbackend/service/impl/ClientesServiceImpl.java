@@ -58,5 +58,20 @@ public class ClientesServiceImpl implements ClientesService {
         return clientes;
     }
 
+    @Override
+    @Transactional(readOnly = true)
+    public List<String> getTipoDocumentos() throws Exception {
+        List<String> tipoDocumentos;
+        try {
+            tipoDocumentos = clientesRepository.getTipoDocumentos();
+            if (tipoDocumentos == null) {
+                throw new Exception("No existen Tipos de Documentos");
+            }
+        } catch (Exception e) {
+            throw new Exception(e.getMessage());
+        }
+        return tipoDocumentos;
+    }
+
 
 }
