@@ -14,10 +14,12 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import py.com.aquipago.pronetbackend.resource.common.BaseResponse;
 import py.com.aquipago.pronetbackend.resource.common.MessageResponse;
 import py.com.aquipago.pronetbackend.resource.common.StatusLevel;
+import py.com.aquipago.pronetbackend.resource.transacciones.Pantalla2PageResponse;
 import py.com.aquipago.pronetbackend.service.DeudasService;
 import springfox.documentation.annotations.ApiIgnore;
 
@@ -126,5 +128,52 @@ public class DeudasResource {
         return new ResponseEntity<>(response, httpStatus);
     }
 
+    @ApiResponses(value = {
+            @ApiResponse(code = HttpServletResponse.SC_OK, message = "OK")
+            ,
+            @ApiResponse(code = HttpServletResponse.SC_CREATED, message = "CREATED")
+            ,
+            @ApiResponse(code = HttpServletResponse.SC_BAD_REQUEST, message = "BAD REQUEST")
+            ,
+            @ApiResponse(code = HttpServletResponse.SC_UNAUTHORIZED, message = "UNAUTHORIZED")
+            ,
+            @ApiResponse(code = HttpServletResponse.SC_FORBIDDEN, message = "FORBIDDEN")
+            ,
+            @ApiResponse(code = HttpServletResponse.SC_NOT_FOUND, message = "NOT FOUND")
+            ,
+            @ApiResponse(code = HttpServletResponse.SC_INTERNAL_SERVER_ERROR, message = "INTERNAL ERROR SERVER")})
+    @ApiOperation(value = "findPantall1", notes = "Retorna lista de deudas")
+    @GetMapping("/pantalla1")
+    public ResponseEntity<?> findPantall1(@RequestParam(value = "estado", required = false) String estado,
+                                          @RequestParam(value = "numero_documento", required = false) String numeroDocumento,
+                                          @RequestParam(value = "tipo_documento", required = false) String tipoDocumento,
+                                          @RequestParam(value = "servicio", required = false) String servicio) {
+        HttpStatus httpStatus;
+        BaseResponse response;
+        MessageResponse message;
+        List<MessageResponse> messages = new ArrayList<>();
+        try {
+            List<Pantalla1Model> pantalla1ModelList = deudasService.findPantall1(estado, numeroDocumento, tipoDocumento, servicio);
+            if (pantalla1ModelList != null) {
+                httpStatus = HttpStatus.OK;
+                message = new MessageResponse(StatusLevel.INFO, "Lista de Deudas OK");
+                messages.add(message);
+                response = new Pantalla1ListResponse(httpStatus.value(), messages, pantalla1ModelList);
+            } else {
+                httpStatus = HttpStatus.INTERNAL_SERVER_ERROR;
+                message = new MessageResponse(StatusLevel.ERROR, "ERROR");
+                messages.add(message);
+                response = new BaseResponse(httpStatus.value(), messages);
+            }
+        } catch (Exception e) {
+            httpStatus = HttpStatus.INTERNAL_SERVER_ERROR;
+            message = new MessageResponse(StatusLevel.INFO, "Error al realizar la consulta a la base de datos!");
+            messages.add(message);
+            message = new MessageResponse(StatusLevel.ERROR, e.getMessage());
+            messages.add(message);
+            response = new BaseResponse(httpStatus.value(), messages);
+        }
+        return new ResponseEntity<>(response, httpStatus);
+    }
 
 }

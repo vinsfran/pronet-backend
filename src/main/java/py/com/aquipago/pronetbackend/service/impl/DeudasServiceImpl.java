@@ -9,10 +9,14 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import py.com.aquipago.pronetbackend.converter.DeudasConverter;
+import py.com.aquipago.pronetbackend.data.dto.Pantalla1DTO;
+import py.com.aquipago.pronetbackend.data.mapper.DeudasMapper;
 import py.com.aquipago.pronetbackend.data.repository.DeudasRepository;
 import py.com.aquipago.pronetbackend.resource.deudas.DeudasModel;
+import py.com.aquipago.pronetbackend.resource.deudas.Pantalla1Model;
 import py.com.aquipago.pronetbackend.service.DeudasService;
 
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -26,6 +30,9 @@ public class DeudasServiceImpl implements DeudasService {
     @Autowired
     @Qualifier("deudasRepository")
     private DeudasRepository deudasRepository;
+
+    @Autowired
+    private DeudasMapper deudasMapper;
 
     @Override
     @Transactional(readOnly = true)
@@ -55,6 +62,31 @@ public class DeudasServiceImpl implements DeudasService {
             throw new Exception(e.getMessage());
         }
         return deudas;
+    }
+
+    @Override
+    public List<Pantalla1Model> findPantall1(String estado, String numeroDocumento, String tipoDocumento, String servicio) throws Exception {
+        Pantalla1Model pantalla1Model;
+        List<Pantalla1Model> pantalla1Models = null;
+        try {
+            List<Pantalla1DTO> pantalla1DTOList = deudasMapper.listPantalla1(estado, numeroDocumento, tipoDocumento, servicio);
+            if (pantalla1DTOList == null) {
+                throw new Exception("No existen Deudas");
+            }
+            pantalla1Models = new ArrayList<>();
+            for (Pantalla1DTO pantalla1DTO : pantalla1DTOList) {
+                pantalla1Model = new Pantalla1Model();
+                pantalla1Model.setServicioId(pantalla1DTO.getServicioId());
+                pantalla1Model.setFactura(pantalla1DTO.getFactura());
+                pantalla1Model.setNombreCompleto(pantalla1DTO.getNombreCompleto());
+                pantalla1Model.setVencimiento(pantalla1DTO.getVencimiento());
+                pantalla1Model.setImporte(pantalla1DTO.getImporte());
+                pantalla1Models.add(pantalla1Model);
+            }
+        } catch (Exception e) {
+            throw new Exception(e.getMessage());
+        }
+        return pantalla1Models;
     }
 
 }
